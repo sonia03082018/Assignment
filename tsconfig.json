@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
     "target": "es5",
     "lib": [
       "dom",
@@ -18,9 +19,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx", 
+    "types":["jest", "@testing-library/jest-dom", "node"],
+    "paths": {
+      "react-router-dom*": ["../node_modules/react-router-dom"]
+    }
   },
   "include": [
     "src"
-  ]
+  ],
+  "exclude": ["node_moduule", "**/*.test.tsx", "**/*.test.ts"]
 }
