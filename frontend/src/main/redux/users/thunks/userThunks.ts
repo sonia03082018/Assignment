@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Iuser } from "../userTypes";
-import { addUser, login, logout } from "main/frontend/api/userApi";
+import { addUser, login, logout } from "../../../api/userApi";
 
 
 export const userLogin = createAsyncThunk('users/login',

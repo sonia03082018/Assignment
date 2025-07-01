@@ -1,15 +1,15 @@
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import IUser from "../models/User";
-import Loader from "../loader/Loader";
-import { registerUser } from "../redux/users";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../redux/store";
-import { useEffect } from "react";
-import { resetUserStatus } from "../redux/users/reducers/userSlice";
 
-const AddUser = () => {
-    
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import Loader from "../loader/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { AppDispatch, RootState } from "main/redux/store";
+import { resetUserStatus } from "main/redux/users/reducers/userSlice";
+import { userLogin } from "main/redux/users";
+import IUser from "main/models/User";
+
+const CreateLogin = () => {
     const {
         register,
         handleSubmit,
@@ -18,9 +18,8 @@ const AddUser = () => {
 
     const navigate = useNavigate();
 
-  
-   const dispatch = useDispatch<AppDispatch>();
-    const { loading,  error } = useSelector((state: RootState) => state.user)
+    const dispatch = useDispatch<AppDispatch>();
+    const { loading,  error, success } = useSelector((state: RootState) => state.user)
 
     useEffect(() => {
         dispatch(resetUserStatus());
@@ -34,9 +33,9 @@ const AddUser = () => {
         }
 
         try {
-            const response = await dispatch(registerUser(Userpayload))
-            if (registerUser.fulfilled.match(response)) {
-                navigate("/")
+            const response = await dispatch(userLogin(Userpayload))
+            if (userLogin.fulfilled.match(response)) {
+                navigate("/main")
             }
         } catch (error) {
             console.log(error, `Server Error`)
@@ -45,42 +44,28 @@ const AddUser = () => {
 
 
     { loading && <Loader /> }
-
     return (
         <>
             <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                    <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Create your account</h2>
-                </div>              
+                    <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign in to your account</h2>
+
+                </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <div>
-                    {error && (
-                    <div className="mb-4 p-4 bg-red-100 text-red-700 border border-red-300 rounded">
-                        {error}
-                    </div>
-                    )}
+                        {error && (
+                            <div className="mb-4 p-4 bg-red-100 text-red-700 border border-red-300 rounded">
+                                {error}
+                            </div>
+                        )}
+                        {success && (
+                            <div className="mb-4 p-4 bg-green-100 text-green-700 border border-red-300 rounded">
+                                {success}
+                            </div>
+                        )}
                     </div>
                     <form className="space-y-6" onSubmit={handleSubmit(handleSubmitCall)}>
-                        <div>
-                            <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">Username</label>
-                            <div className="mt-2">
-                                <input type="text"
-                                    id="username"
-                                    {...register("username", {
-                                        required: "Username is required",
-                                        minLength: {
-                                            value: 3,
-                                            message: "Name must be atleast 3 characters",
-                                        },
-                                    })}
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-                                {errors.username && (
-                                    <div className="text-red-500 text-xs italic">{errors.username.message?.toString()}</div>
-                                )}
-                            </div>
-                        </div>
-
                         <div>
                             <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">Email address</label>
                             <div className="mt-2">
@@ -126,12 +111,15 @@ const AddUser = () => {
                             <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create Account</button>
                         </div>
                     </form>
+
+                    <p className="mt-10 text-center text-sm/6 text-gray-500">
+                        Not a member?
+                        <Link to={`/register`} className="font-semibold text-indigo-600 hover:text-indigo-500">Sign up </Link>
+                    </p>
                 </div>
             </div>
 
         </>
     )
 }
-export default AddUser;
-
-
+export default CreateLogin

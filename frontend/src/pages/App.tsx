@@ -1,9 +1,9 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Login from '../main/frontend/login/login';
-import Register from '../main/frontend/login/register';
 import MainPage from '../pages/MainPage';
 import CreateEmployee from "./CreateEmployee";
 import UpdateEmployee from "./UpdateEmployee";
+import Register from "main/components/login/Register";
+import Login from "main/components/login/Login";
 
 
 function App() {

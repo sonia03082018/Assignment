@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addEmployee, deleteEmployee, getEmployeeById, getEmployees, updateEmployee } from "main/frontend/api/employeeApi";
+import { addEmployee, deleteEmployee, getEmployeeById, getEmployees, updateEmployee } from "../../../api/employeeApi";
 import { IEmployee } from "../employeeTypes";
 
 export const fetchAllEmployees = createAsyncThunk('employees/fetchAll',

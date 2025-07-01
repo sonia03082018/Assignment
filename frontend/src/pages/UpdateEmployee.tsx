@@ -1,5 +1,6 @@
-import Header from 'main/frontend/header/header';
-import EditEmployee from 'main/frontend/editEmployee/EditEmployee';
+import EditEmployee from "main/components/employees/EditEmployee";
+import Header from "main/components/header/Header";
+
 const UpdateEmployee = () => { 
     return (
         <>

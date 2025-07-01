@@ -1,5 +1,6 @@
-import Header from 'main/frontend/header/header';
-import EmployeeList from '../main/frontend/employees/Employees';
+import EmployeeList from "main/components/employees/EmployeeList"
+import Header from "main/components/header/Header"
+
 const MainPage = () => { 
     return (
         <>

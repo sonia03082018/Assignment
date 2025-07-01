@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllEmployees, removeEmployee } from "../redux/employees";
-import { RootState, AppDispatch } from "../redux/store";
-
 import { Link } from "react-router-dom";
 import Loader from "../loader/Loader";
-import useDebounce from "../utils/searchQuery";
-import IEmployee from "../models/Employee";
-import { resetEmployeeStatus } from "../redux/employees/reducers/employeeSlice";
+import { AppDispatch, RootState } from "main/redux/store";
+import useDebounce from "main/utils/searchQuery";
+import { fetchAllEmployees, removeEmployee } from "main/redux/employees";
+import { resetEmployeeStatus } from "main/redux/employees/reducers/employeeSlice";
+import IEmployee from "main/models/Employee";
 
 
 const EmployeeList = () => {

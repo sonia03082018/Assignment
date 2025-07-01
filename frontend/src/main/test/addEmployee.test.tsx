@@ -1,7 +1,5 @@
 import {render, screen, fireEvent, waitFor} from '@testing-library/react';
 import '@testing-library/jest-dom';
-import AddEmployee  from '../../frontend/addEmployee/AddEmployee';
-import { addEmployee } from '../../frontend/api/employeeApi';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
