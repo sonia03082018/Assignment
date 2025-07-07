@@ -5,12 +5,11 @@ import { addUser, login, logout } from "../../../api/userApi";
 
 export const userLogin = createAsyncThunk('users/login',
     async (user: Iuser, thunkAPI) => {
-        console.log("called login API");
         try {
             const response = await login(user);
             return response.data;
         } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.response?.data.message || ' Invalid password');
+            return thunkAPI.rejectWithValue(error.response?.data.message || 'Invalid password');
         }
     }
 )

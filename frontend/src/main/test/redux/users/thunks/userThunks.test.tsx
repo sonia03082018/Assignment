@@ -36,12 +36,12 @@ describe('userThunks', () => {
 
     it('should handle login failure', async () => {
         (userApi.login as jest.Mock).mockImplementation(() => {
-            throw { response: { data: 'Invalid credentials' } }
+            throw { response: { data: 'Invalid password' } }
         });
 
         const result = await userLogin(mockUser)(dispatch, getState, {});
         expect(result.type).toBe('users/login/rejected');
-        expect(result.payload).toBe('Invalid credentials')
+        expect(result.payload).toBe('Invalid password')
     });
     it('should register user successfully', async () => {
         (userApi.addUser as jest.Mock).mockImplementation(async (user) => {
@@ -57,12 +57,12 @@ describe('userThunks', () => {
 
     it('should handle registration failure', async () => {
         (userApi.addUser as jest.Mock).mockImplementation(() => {
-            throw { response: { data: 'User exists' } }
+            throw { response: { data: 'Email already registered' } }
         });
 
         const result = await registerUser(mockUser)(dispatch, getState, {});
         expect(result.type).toBe('users/add-user/rejected');
-        expect(result.payload).toBe('User exists')
+        expect(result.payload).toBe('Email already registered')
     });
 
     it('should logout user successfully', async () => {
