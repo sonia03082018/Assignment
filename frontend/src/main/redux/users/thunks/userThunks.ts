@@ -10,7 +10,7 @@ export const userLogin = createAsyncThunk('users/login',
             const response = await login(user);
             return response.data;
         } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.respons?.data || 'Invalid credentials');
+            return thunkAPI.rejectWithValue(error.response?.data.message || ' Invalid password');
         }
     }
 )
@@ -21,7 +21,7 @@ export const registerUser = createAsyncThunk('users/add-user',
             const response = await addUser(user);
             return response.data;
         } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.respons?.data || 'User exists');
+            return thunkAPI.rejectWithValue(error.respons?.data.message || 'Email already registered');
         }
     }
 )

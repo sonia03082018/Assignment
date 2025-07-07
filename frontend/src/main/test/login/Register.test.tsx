@@ -1,4 +1,16 @@
 
+import { BrowserRouter, useNavigate } from "react-router-dom";
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { Iuser, UserState } from "main/redux/users/userTypes";
+import Login from "main/components/login/Login";
+import {  UserReducer } from "main/redux/users";
+import IUser from "main/models/User";
+import * as thunks from 'main/redux/users/thunks/userThunks';
+import Register from "main/components/login/Register";
+
 //Mock react-router-dom
 const mockedUseNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -6,20 +18,9 @@ jest.mock('react-router-dom', () => ({
     useNavigate: () => mockedUseNavigate,
 }));
 
-import { BrowserRouter, useNavigate } from "react-router-dom";
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { configureStore } from "@reduxjs/toolkit";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { UserState } from "main/redux/users/userTypes";
-import { registerUser, UserReducer } from "main/redux/users";
-import Register from "main/components/login/Register";
-import * as thunks from 'main/redux/users/thunks/userThunks';
-import IUser from "main/models/User";
-
 jest.mock('main/redux/users/thunks/userThunks');
 
-const mockedRegister = thunks.registerUser as unknown as jest.Mock;
+const mockedRegisterUserLogin = thunks.registerUser as unknown as jest.Mock;
 const mockUser: IUser = {
     username: 'John',
     password: '123457',
@@ -32,10 +33,10 @@ describe('Register Component', () => {
     });
     const renderComponent = (initialState: { user: UserState } = {
         user: {
-            user: null,
+            user: mockUser,
             loading: false,
             error: null,
-            success: null
+            success: null,
         },
 
     }) => {
@@ -43,7 +44,7 @@ describe('Register Component', () => {
             reducer: {
                 user: UserReducer,
             },
-            preloadedState: { ...initialState },
+            preloadedState: {...initialState},
             middleware: (getDefaultMiddleware: any) =>
                 getDefaultMiddleware({ thunk: true, serializableCheck: false }),
         });
@@ -57,9 +58,17 @@ describe('Register Component', () => {
             </Provider>
         )
     }
+    beforeEach(() => {
+      mockedRegisterUserLogin.mockReset();
+      mockedUseNavigate.mockReset();
+    })
+    afterEach(() => {
+        jest.clearAllMocks();
+    })
 
 
-    it('should render login form', () => {
+
+    it('should render registration form', () => {
         renderComponent();
         //  screen.debug();
         expect(screen.getByText(/username/i)).toBeInTheDocument();
@@ -68,55 +77,60 @@ describe('Register Component', () => {
         expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
     });
 
-    it('should submit form and dispatch login', async () => {
-        mockedRegister.mockImplementation((userData: IUser) => async (dispatch: any) => {
-            dispatch({ type: 'users/registerUser/fulfilled', payload: userData });
-            return { type: 'users/registerUser/fulfilled', payload: userData }
-        })
-
-        renderComponent();
-        const usernameInput = screen.getByLabelText(/username/i);
-        const passwordInput = screen.getByLabelText(/password/i);
-        const emailInput = screen.getByLabelText(/email/i);
-
-        fireEvent.change(usernameInput, { target: { value: 'testuser' } });
-        fireEvent.change(passwordInput, { target: { value: 'test@gmail.com' } });
-        fireEvent.change(emailInput, { target: { value: '1234' } });
-
-
-        fireEvent.click(screen.getByRole('button', { name: /create account/i }));
-
-        // await waitFor(() => {
-        //     expect(mockedRegister).toHaveBeenCalledWith({
-        //         name: 'testuser',
-        //         email: 'test@gmail.com',
-        //         password: '1234'
-        //     });
-        //     expect(mockedUseNavigate).toHaveBeenCalledWith('\main')
-        // })
-
-    });
-
-    it("Log error if login fails", async () => {
-        mockedRegister.mockImplementation(() => async (dispatch: any) => {
-            dispatch({ type: 'users/registerUser/rejected', error: { message: 'email already exists' } });
-            return { type: 'users/registerUser/rejected', error: { message: 'email already exists' } }
-        })
-
+    it('should submit form and dispatch register', async () => {
+  
+          mockedRegisterUserLogin.mockImplementation((userData: Iuser) => async (dispatch: any) => {
+            dispatch({ type: 'users/registerUser/fulfilled', payload: userData});
+            return { type: 'users/registerUser/fulfilled', payload: userData} 
+        });
         renderComponent();
 
-        const passwordInput = screen.getByLabelText(/password/i);
+        const nameInput = screen.getByLabelText(/username/i);
         const emailInput = screen.getByLabelText(/email/i);
+        const password = screen.getByLabelText(/password/i);
 
-        fireEvent.change(passwordInput, { target: { value: 'duplicate@gmail.com' } });
-        fireEvent.change(emailInput, { target: { value: 'testpass' } });
+        fireEvent.change(nameInput, { target: { value: 'test' } });
+        fireEvent.change(emailInput, { target: { value: 'test@gmail.com' } });
+        fireEvent.change(password, { target: { value: '123457' } });
 
-        fireEvent.change(screen.getByLabelText(/email address/i), { target: { value: 'test@gmail.com' } });
-        fireEvent.change(screen.getByLabelText(/password/i), { target: { value: '124' } });
+
         fireEvent.click(screen.getByRole('button', { name: /create account/i }));
 
         await waitFor(() => {
-            //expect(consoleSpy).toHaveBeenCalledWith(expect.any(Error), 'Server Error')
+            expect(mockedRegisterUserLogin).toHaveBeenCalledWith({
+                email: 'test@gmail.com',
+                username: 'test',
+                password: btoa('123457')
+            });
+           // expect(mockedUseNavigate).toHaveBeenCalledWith('/')
+        })
+
+    });
+
+    it("Log error if registration fails", async () => {
+        mockedRegisterUserLogin.mockImplementation((user: Iuser) => async (dispatch: any) => {
+            dispatch({ type: 'users/registerUser/rejected', error: {message:'Email already registered'} });
+            return { type: 'users/registerUser/rejected', error: {message:'Email already registered'} } 
+        });
+
+        renderComponent();
+
+        const nameInput = screen.getByLabelText(/username/i);
+        const emailInput = screen.getByLabelText(/email/i);
+        const password = screen.getByLabelText(/password/i);
+
+        fireEvent.change(nameInput, { target: { value: 'testing' } });
+        fireEvent.change(emailInput, { target: { value: 'test@gmail.com' } });
+        fireEvent.change(password, { target: { value: '123457' } });
+
+        fireEvent.click(screen.getByRole('button', { name: /create account/i }));
+        await waitFor(() => {
+              expect(mockedRegisterUserLogin).toHaveBeenCalledWith({
+                username: 'testing',
+                email: 'test@gmail.com',
+                password: btoa('123457')
+            });
+            //expect(screen.getByText(/Email already registered/i)).toBeInTheDocument();
         });
     })
 

@@ -95,7 +95,7 @@ describe('Login Component', () => {
         await waitFor(() => {
             expect(mockedUserLogin).toHaveBeenCalledWith({
                 email: 'test@gmail.com',
-                password: 'MTIzNDU3'
+                password: btoa('123457')
             });
            // expect(mockedUseNavigate).toHaveBeenCalledWith('main')
         })
@@ -104,18 +104,22 @@ describe('Login Component', () => {
 
     it("Log error if login fails", async () => {
         mockedUserLogin.mockImplementation((user: Iuser) => async (dispatch: any) => {
-            dispatch({ type: 'users/userLogin/rejected', error: {message:'Invalid credentials'} });
-            return { type: 'users/userLogin/rejected', error: {message:'Invalid credentials'} } 
+            dispatch({ type: 'users/userLogin/rejected', error: {message:'Invalid password'} });
+            return { type: 'users/userLogin/rejected', error: {message:'Invalid password'} } 
         });
 
         renderComponent();
 
-        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'wrong@gmail.com' } });
+        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@gmail.com' } });
         fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'wrongpass' } });
         fireEvent.click(screen.getByRole('button', { name: /create account/i }));
 
         await waitFor(() => {
-             //expect(screen.getByRole('alert')).toHaveTextContent(/Invalid credentials/i);
+              expect(mockedUserLogin).toHaveBeenCalledWith({
+                email: 'test@gmail.com',
+                password: btoa('wrongpass')
+            });
+           // expect(screen.getByText(/Invalid password/i)).toBeInTheDocument();
         });
     })
 
