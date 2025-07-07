@@ -4,21 +4,22 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { configureStore } from "@reduxjs/toolkit";
 import { employeeReducer } from "main/redux/employees";
-import { EmployeeState } from "main/redux/employees/employeeTypes";
 import { Provider } from "react-redux";
 import EmployeeList from "main/components/employees/EmployeeList";
 import * as thunks from 'main/redux/employees/thunks/employeeThunks';
+import IEmployee from "main/models/Employee";
 
 jest.mock('main/redux/employees/thunks/employeeThunks');
 
 const mockedFetchAllEmployees = thunks.fetchAllEmployees as unknown as jest.Mock;
+const mockedDeleteEmployee = thunks.removeEmployee as unknown as jest.Mock;
 
 const mockEmployees = [{ _id: '1', name: 'John', email: 'john@gmail.com', designation: 'QA', salary: 12000 }, { _id: '2', name: 'test', email: 'test@gmail.com', designation: 'QA', salary: 22000 }];
 
 describe('Employees list Component', () => {
 
 
-    const renderComponent = (initialState: { employees: EmployeeState } = {
+    const renderComponent = (initialState: { employees: IEmployee | any } = {
         employees: {
             employees: mockEmployees,
             loading: false,
@@ -89,20 +90,40 @@ describe('Employees list Component', () => {
             })
 
         });
-        // it('shows error message if error exist', () =>{
-        //     renderComponent({
-        //         employees: {
-        //             employees:[],
-        //             loading: false,
-        //             error:'failed to load employees',
-        //             totalPages: 1
-        //         }
-        //     })
-        //     expect(screen.getByText(/failed to load employees/i)).toBeInTheDocument();
-        // })
-
+     
     });
+     it('it calls delete employee on form submit', async () => {
+                const employee = {
+                    id:"1",
+                    name: 'Test',
+                    email: 'test@example.com',
+                    designation: 'QA',
+                    salary: 50000
+                };
 
+                mockedDeleteEmployee.mockReturnValue(()=> Promise.resolve());
+                mockedFetchAllEmployees.mockReturnValue(()=> Promise.resolve());
+    
+                renderComponent({
+                    employees:{
+                        employees: [employee],
+                        loading:false,
+                        error: null, 
+                        totalPages: 1
+                    }
+                });
+    
+    
+                const submitButton = screen.getByRole('button', { name: /Delete/i });
+    
+                fireEvent.click(submitButton);
+    
+                await waitFor(() => {
+                    expect(mockedDeleteEmployee).toHaveBeenCalledTimes(1);
+                    expect(mockedFetchAllEmployees).toHaveBeenCalled();
+                });
+    
+            });
 
 
 });    

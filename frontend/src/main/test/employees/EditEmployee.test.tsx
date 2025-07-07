@@ -1,7 +1,7 @@
 import { Provider } from 'react-redux';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import {  MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import * as thunks from 'main/redux/employees/thunks/employeeThunks';
 import { employeeReducer } from 'main/redux/employees';
 import { configureStore } from '@reduxjs/toolkit';
@@ -36,7 +36,7 @@ describe('Edit Employee Component', () => {
             reducer: {
                 employees: employeeReducer,
             },
-            preloadedState: {...initialState},
+            preloadedState: { ...initialState },
             middleware: (getDefaultMiddleware: any) =>
                 getDefaultMiddleware({ thunk: true, serializableCheck: false }),
         });
@@ -64,15 +64,26 @@ describe('Edit Employee Component', () => {
         })
         afterEach(() => {
             jest.clearAllMocks();
-        })
+        });
+        it('renders all form input fields and the button', () => {
+            renderComponent();
+            expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/designation/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/salary/i)).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: /Save/i })).toBeInTheDocument();
+        });
+
         it('renders employee data and updates it on submit', async () => {
-            renderComponent({  employees: {
-            employees: [],
-            loading: false,
-            error: null,
-            success: '',
-            selectedEmployee: mockEmployee,
-        }});
+            renderComponent({
+                employees: {
+                    employees: [],
+                    loading: false,
+                    error: null,
+                    success: '',
+                    selectedEmployee: mockEmployee,
+                }
+            });
             await waitFor(() => {
                 expect(screen.getByLabelText(/name/i)).toHaveValue(mockEmployee.name);
                 expect(screen.getByLabelText(/designation/i)).toHaveValue(mockEmployee.designation);
@@ -89,31 +100,60 @@ describe('Edit Employee Component', () => {
 
 
             await waitFor(() => {
-                // expect(mockedEditEmployee).toHaveBeenCalledWith({
-                //     id: '1', 
-                //     employee: {
-                //     name: 'updated name',
-                //     email: 'test@gmail.com',
-                //     designation: 'QA',
-                //     salary: '12000'
-                // }
-                expect(mockedEditEmployee).toHaveBeenCalledTimes(1);
+                expect(mockedEditEmployee).toHaveBeenCalledWith({
+                    employee: {
+                        id: '1',
+                        name: 'updated name',
+                        email: 'test@gmail.com',
+                        designation: 'QA',
+                        salary: '12000'
+                    },
+                    id: '1'
                 })
+
+                expect(mockedEditEmployee).toHaveBeenCalledTimes(1);
             })
         })
+    });
+    it("Log error if edit employee fails", async () => {
+        const formData = {
+            name: 'Test',
+            email: 'test@example.com',
+            designation: 'QA',
+            salary: 50000
+        };
+        mockedEditEmployee.mockImplementation((id: string) => async (dispatch: any) => {
+            dispatch({ type: 'users/editEmployee/rejected', error: { message: 'Server error' } });
+            return { type: 'users/editEmployee/rejected', error: { message: 'Server error' } }
+        });
 
-        // it('shows success message when  update is successful', () =>{
-        //     renderComponent({success: 'Employee updated successfully'});
-        //     expect(screen.getByText(/employee updated successfully/i)).toBeInTheDocument();
-        // })
+        renderComponent();
 
-        // it('shows error message when  error is preseend', () =>{
-        //     renderComponent({eror: 'something went wrong'});
-        //     expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
-        // })
+        fireEvent.change(screen.getByLabelText(/name/i), { target: { value: formData.name } });
+        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: formData.email } });
+        fireEvent.change(screen.getByLabelText(/designation/i), { target: { value: formData.designation } });
+        fireEvent.change(screen.getByLabelText(/salary/i), { target: { value: formData.salary } });
 
+        const submitButton = screen.getByRole('button', { name: /save/i });
 
+        fireEvent.click(submitButton);
+        await waitFor(() => {
+            expect(mockedEditEmployee).toHaveBeenCalledWith({
+                employee: {
+                    name: 'Test',
+                    email: 'test@example.com',
+                    designation: 'QA',
+                    salary: "50000",
+                    id: '1'
+                },
+                id: '1'
+            });
+            expect(mockedEditEmployee).toHaveBeenCalledTimes(1);
+        });
     })
+
+
+})
 
 
 

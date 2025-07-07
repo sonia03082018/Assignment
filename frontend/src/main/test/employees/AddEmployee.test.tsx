@@ -26,13 +26,7 @@ import AddEmployee from 'main/components/employees/AddEmployee';
 jest.mock('main/redux/employees/thunks/employeeThunks');
 
 const mockedAddEmployee = thunks.createEmployee as unknown as jest.Mock;
-const mockEmployee = {
-    id: '1',
-    name: 'John',
-    designation: 'QA',
-    email: 'test@gmail.com',
-    salary: 10000
-}
+
 describe('AddEmployee Component', () => {
 
     const store = configureStore({
@@ -94,11 +88,7 @@ describe('AddEmployee Component', () => {
     }
 
     describe('Add Employee test cases', () => {
-        beforeEach(() => {
-            mockedAddEmployee.mockImplementation((employee: IEmployee) => async (dispatch: any) => {
-                dispatch({ type: 'employees/createEmployee/fulfilled', payload: mockEmployee });
-            });
-        })
+
         afterEach(() => {
             jest.clearAllMocks();
         })
@@ -119,6 +109,10 @@ describe('AddEmployee Component', () => {
                 designation: 'QA',
                 salary: 50000
             };
+            mockedAddEmployee.mockImplementation((employee: IEmployee) => async (dispatch: any) => {
+                dispatch({ type: 'employees/createEmployee/fulfilled', payload: employee });
+                return { type: 'employees/createEmployee/fulfilled', payload: employee }
+            });
 
             renderComponent();
 
@@ -129,14 +123,54 @@ describe('AddEmployee Component', () => {
 
 
             const submitButton = screen.getByRole('button', { name: /create an employee/i });
+
             fireEvent.click(submitButton);
 
             await waitFor(() => {
-                expect(mockDispatch).toHaveBeenCalled;
-                //expect(createEmployee).toHaveBeenCalledTimes(1);
+                expect(mockedAddEmployee).toHaveBeenCalledWith({
+                    name: 'Test',
+                    email: 'test@example.com',
+                    designation: 'QA',
+                    salary: 50000
+                });
+                expect(mockedAddEmployee).toHaveBeenCalledTimes(1);
             });
 
         });
+
+        it("Log error if registration fails", async () => {
+            const formData = {
+                name: 'Test',
+                email: 'test@example.com',
+                designation: 'QA',
+                salary: 50000
+            };
+            mockedAddEmployee.mockImplementation((employee: IEmployee) => async (dispatch: any) => {
+                dispatch({ type: 'users/createEmployee/rejected', error: { message: 'Server error' } });
+                return { type: 'users/createEmployee/rejected', error: { message: 'Server error' } }
+            });
+
+            renderComponent();
+
+            fireEvent.change(screen.getByLabelText(/name/i), { target: { value: formData.name } });
+            fireEvent.change(screen.getByLabelText(/email/i), { target: { value: formData.email } });
+            fireEvent.change(screen.getByLabelText(/designation/i), { target: { value: formData.designation } });
+            fireEvent.change(screen.getByLabelText(/salary/i), { target: { value: formData.salary } });
+
+            const submitButton = screen.getByRole('button', { name: /create an employee/i });
+
+            fireEvent.click(submitButton);
+            await waitFor(() => {
+                expect(mockedAddEmployee).toHaveBeenCalledWith({
+                    name: 'Test',
+                    email: 'test@example.com',
+                    designation: 'QA',
+                    salary: 50000
+                });
+                expect(mockedAddEmployee).toHaveBeenCalledTimes(1);
+            });
+        })
+
 
 
         it('displays success message when success is true', () => {
@@ -169,23 +203,6 @@ describe('AddEmployee Component', () => {
             expect(screen.getByText(/Server error/i)).toBeInTheDocument();
         });
 
-
-        // it('displays loading state when loading is true', () => {
-        //     (useSelector as unknown as jest.Mock).mockImplementation((selectorFn: any) =>
-        //         selectorFn({
-        //             employees: {
-        //                 loading: 'true',
-        //                 error: null,
-        //                 success: false,
-        //             }
-        //         })
-        //     );
-
-        //     renderComponent();        
-        //     const loader =  screen.findByRole('status', {name:/loading/i})   
-        //     expect(loader).toBeInTheDocument();
-        // });
-
         it('it calls resetEmployeeStatus on mount', () => {
             renderComponent();
             expect(mockDispatch).toHaveBeenCalledWith(resetEmployeeStatus());
@@ -199,13 +216,17 @@ describe('AddEmployee Component', () => {
                     cb({}),
                 formState: {
                     errors: {
-                        name: { message: 'Name is required' }
+                        name: { message: 'Name is required' },
+                        designation: { message: 'Designation is required' },
+                        email: { message: 'Email is required' }
                     },
                 },
                 reset: mockReset,
             });
             renderComponent();
             expect(screen.getByText(/Name is required/i)).toBeInTheDocument();
+            expect(screen.getByText(/Designation is required/i)).toBeInTheDocument();
+            expect(screen.getByText(/Email is required/i)).toBeInTheDocument();
         })
 
     })

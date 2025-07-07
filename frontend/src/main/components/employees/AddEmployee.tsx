@@ -28,7 +28,7 @@ const AddEmployee = () => {
 
 
     const handleSubmitCall = async(employee: IEmployee) => {
-        dispatch(resetEmployeeStatus());
+        await dispatch(resetEmployeeStatus());
         try { 
            const response =  await dispatch(createEmployee(employee))        
            if(createEmployee.fulfilled.match(response)) {

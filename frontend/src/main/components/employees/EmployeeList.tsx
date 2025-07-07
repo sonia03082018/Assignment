@@ -29,7 +29,7 @@ const EmployeeList = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await dispatch(removeEmployee(id)).unwrap();
+            await dispatch(removeEmployee(id));
             console.log("Employee deleted successfully");
             dispatch(fetchAllEmployees({page: currentPage, limit:employeesPerPage, searchQuery:debouncedSearchQuery}))
         } catch (error) {
@@ -80,7 +80,7 @@ const EmployeeList = () => {
                     <tbody>
                         {employees.map((employee: IEmployee) => (
                             <tr key={employee._id}>
-                                <td className="px-6 py-3">{employee.name}</td>
+                                <td  className="px-6 py-3">{employee.name}</td>
                                 <td className="px-6 py-3">{employee.email}</td>
                                 <td className="px-6 py-3">{employee.designation}</td>
                                 <td className="px-6 py-3">{employee.salary}</td>
