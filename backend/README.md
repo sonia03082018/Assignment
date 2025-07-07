@@ -4,6 +4,12 @@
 port listens on 5000
 
 ```
+## npm run swagger
+
+```
+To generate swagger-output.json
+
+```
 
 
 ## Project structure
@@ -20,6 +26,7 @@ assignment/
 ├── package-lock.json           # Detailed dependencies for all entries in package.json
 ├── README.md                   # this file
 ├── server.js                   # server config
+├── swagger.js                  # swagger-output generation file
 ├── env                         # db connection
 
 

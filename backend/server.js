@@ -1,11 +1,13 @@
-const express = require("express")
-const dotEnv = require("dotenv")
-const mongoose = require("mongoose")
-const bodyParser = require("body-parser")
-const employeeRoutes = require("./routes/employeeRoutes")
-const userRoutes = require("./routes/userRoutes")
-const cors = require('cors')
-const cookieParser = require('cookie-parser')
+const express = require("express");
+const dotEnv = require("dotenv");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const employeeRoutes = require("./routes/employeeRoutes");
+const userRoutes = require("./routes/userRoutes");
+const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
+
 
 const app = express()
 
@@ -29,9 +31,14 @@ mongoose.connect(process.env.MONGO_URI)
         console.log("Error", `${error}`)
     })
 
+//routes
 app.use('/employees', employeeRoutes)
 app.use('/users', userRoutes)
 
+//swagger docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+//start the server
 app.listen(PORT, () => {
     console.log(`server started and running ar ${PORT}`)
 })
