@@ -14,3 +14,9 @@ export interface EmployeeState {
     selectedEmployee?:  null;
     totalPages: number;
 }
+
+export interface FetchAllEmployeesParams {
+    page: number,
+    limit: number,
+    searchQuery: string
+}

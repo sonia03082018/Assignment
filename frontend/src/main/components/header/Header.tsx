@@ -9,7 +9,6 @@ const Header = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const user = useSelector((state: RootState) => state.user.user)
-    console.log(user);
 
     const handleLogout = async () => {
         try {

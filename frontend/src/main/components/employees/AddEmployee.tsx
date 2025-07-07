@@ -1,5 +1,4 @@
-import  { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import  { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Loader from "../loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +6,7 @@ import { AppDispatch, RootState } from "main/redux/store";
 import { resetEmployeeStatus } from "main/redux/employees/reducers/employeeSlice";
 import { createEmployee } from "main/redux/employees";
 import IEmployee from "main/models/Employee";
+import { Link } from "react-router-dom";
 
 
 const AddEmployee = () => {
@@ -28,10 +28,11 @@ const AddEmployee = () => {
 
 
     const handleSubmitCall = async(employee: IEmployee) => {
+        dispatch(resetEmployeeStatus());
         try { 
-           const response =  await dispatch(createEmployee(employee))
+           const response =  await dispatch(createEmployee(employee))        
            if(createEmployee.fulfilled.match(response)) {
-            console.log( " Employee created succefully")
+            console.log( "Employee created successfully")
            }
         } catch (error) {
           console.log( " Server Error")
@@ -63,7 +64,7 @@ const AddEmployee = () => {
                     </div>
                     <form className="space-y-6" onSubmit={handleSubmit(handleSubmitCall)}>
                         <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Name">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                                 Name
                             </label>
                             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -82,7 +83,7 @@ const AddEmployee = () => {
                             )}
                         </div>
                         <div className="mb-6">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                                 Email
                             </label>
                             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
@@ -107,7 +108,8 @@ const AddEmployee = () => {
                             </label>
                             <div className="relative">
                                 <select
-                                    className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state"
+                                    className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                                    id="designation"
                                    
                                     {...register("designation", {
                                         required: "Designation is required"
@@ -125,7 +127,7 @@ const AddEmployee = () => {
                             </div>
                         </div>
                         <div className="mb-6">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="salary">
                                 Salary
                             </label>
                             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"

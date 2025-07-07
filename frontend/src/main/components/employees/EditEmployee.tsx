@@ -83,7 +83,7 @@ const EditEmployee = () => {
                             )}
                             </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="Name">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
                                 Name
                             </label>
                             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -126,7 +126,7 @@ const EditEmployee = () => {
                                 Designation
                             </label>
                             <div className="relative">
-                                <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state" 
+                                <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="designation" 
                                 
                                  {...register("designation", {
                                         required: "Designation is required"
@@ -144,7 +144,7 @@ const EditEmployee = () => {
                             </div>
                         </div>
                         <div className="mb-6">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="salary">
                                 Salary
                             </label>
                             <input className="shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
@@ -171,7 +171,7 @@ const EditEmployee = () => {
                             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
                                 Save
                             </button>
-                               <Link to="/main" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+                               <Link to='/main' className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
                               Back 
                             </Link>
                         </div>

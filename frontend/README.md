@@ -4,6 +4,12 @@
 http://localhost:3000
 ```
 
+## npm run test
+
+```
+http://localhost:3000
+```
+
 ## CSS Conventions
 
 ```
@@ -25,7 +31,16 @@ assignment/
 ├── static/                     # Contains all static resources.
 ├── src/                        # project root
 │   ├── main/                   # Main Source code folder
-│   ├── pages/                  # Test cases folder
+|      ├── api/                 # API
+|      ├── components/          # Components folder
+|      ├── redux/               # Store folder
+|      ├── models/              # Interface folder
+|      ├── utils/               # Common functions folder          
+|      ├── test/                # Test cases folder
+│   ├── pages/                  # Pages folder
+|   ├── static/                 # Static css
+|   ├── index.ts                # root file
+|   ├── setupTest.ts            # Test case file
 │
 ├── build                       # This folder contains typescript compiled code. 
 │                                 This folder is ignored and will not be committed.
@@ -35,11 +50,11 @@ assignment/
 ├── package-lock.json           # Detailed dependencies for all entries in package.json
 ├── README.md                   # this file
 ├── tsconfig.json               # typescript config
+├── jest.config.json             # testcase config
 ├── tailwind.config.json        # tailwind config
 
 
 ```
-
 
 
 

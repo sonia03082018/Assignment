@@ -54,7 +54,6 @@ const EmployeeList = () => {
                     )}
                 </div>
                 <table className=" mt-7 table-auto w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <div className="flex justify-between items-center mb-4"></div>
                     <caption className="caption-top text-3xl font-bold dark:text-white mb-6">
                         List of Employees
                         <input type="text"
