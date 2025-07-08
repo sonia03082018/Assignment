@@ -138,7 +138,7 @@ describe('AddEmployee Component', () => {
 
         });
 
-        it("Log error if registration fails", async () => {
+        it("Log error if create employee fails", async () => {
             const formData = {
                 name: 'Test',
                 email: 'test@example.com',
@@ -173,7 +173,7 @@ describe('AddEmployee Component', () => {
 
 
 
-        it('displays success message when success is true', () => {
+        it('displays success message when successfull employee creation is true', () => {
             (useSelector as unknown as jest.Mock).mockImplementation((selector: any) =>
                 selector({
                     employees: {

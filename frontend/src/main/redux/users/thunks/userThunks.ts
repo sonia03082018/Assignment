@@ -20,7 +20,7 @@ export const registerUser = createAsyncThunk('users/add-user',
             const response = await addUser(user);
             return response.data;
         } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.respons?.data.message || 'Email already registered');
+            return thunkAPI.rejectWithValue(error.response?.data.message || 'Email already registered');
         }
     }
 )

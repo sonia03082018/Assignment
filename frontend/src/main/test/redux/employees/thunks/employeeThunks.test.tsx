@@ -1,5 +1,6 @@
+import { configureStore } from "@reduxjs/toolkit";
 import * as employeeApi from "main/api/employeeApi";
-import { createEmployee, editEmployee, fetchAllEmployees, fetchEmployeeById, removeEmployee } from "main/redux/employees";
+import { createEmployee, editEmployee, employeeReducer, fetchAllEmployees, fetchEmployeeById, removeEmployee } from "main/redux/employees";
 
 
 jest.mock('main/api/employeeApi', () => ({
@@ -17,6 +18,10 @@ const mockedGetEmployeeById = employeeApi.getEmployeeById as jest.Mock;
 const mockedRemoveEmployee = employeeApi.deleteEmployee as jest.Mock;
 
 describe('EmployeeThunks', () => {
+
+    const store = configureStore({
+        reducer: { employees: employeeReducer }
+    })
 
     const dispatch = jest.fn();
     const getState = jest.fn();
@@ -73,5 +78,79 @@ describe('EmployeeThunks', () => {
         expect(result.payload).toEqual(updateEmployee);
         expect(result.type).toBe('employees/update/fulfilled');
     });
+
+     it('fetchEmployees - should dispatch rejected action when API calls fails', async () => {
+        const errorResponse = {
+            response: {
+                data: 'Failed to fetchAll employees'
+            }
+        }
+        mockedGetEmployees.mockRejectedValueOnce(errorResponse);
+
+        const result = await store.dispatch(fetchAllEmployees({page: 1, limit: 10, searchQuery: '' }) as any)
+        expect(result.type).toBe('employees/fetchAll/rejected');
+        expect(result.payload).toBe('Failed to fetchAll employees');
+    });
+
+    it('createEmployee - should dispatch rejected action when API calls fails', async () => {
+        const errorResponse = {
+            response: {
+                data: 'Failed to create employee'
+            }
+        }
+        mockedAddEmployee.mockRejectedValueOnce(errorResponse);
+
+        const result = await store.dispatch(createEmployee({ name: 'test', designation: 'QA', salary: 10000, email: 'test@gmail.com', _id: '1' }) as any)
+        expect(result.type).toBe('employees/create/rejected');
+        expect(result.payload).toBe('Failed to create employee');
+    });
+    it('editEmployee - should dispatch rejected action when API calls fails', async () => {
+        const errorResponse = {
+            response: {
+                data: 'Failed to update employee'
+            }
+        }
+        mockedUpdateEmployee.mockRejectedValueOnce(errorResponse);
+
+        const result = await store.dispatch(editEmployee({
+            id: '1', employee: {
+                name: 'updated name',
+                designation: 'Developer',
+                salary: 15000,
+                email: 'test@gmail.com',
+                _id: '1'
+            }
+        }) as any)
+        expect(result.type).toBe('employees/update/rejected');
+        expect(result.payload).toBe('Failed to update employee');
+    });
+    it('fetchEmployeeById - should dispatch rejected action when API calls fails', async () => {
+        const errorResponse = {
+            response: {
+                data: 'Failed to fetch employeeById'
+            }
+        }
+        mockedGetEmployeeById.mockRejectedValueOnce(errorResponse);
+
+        const result = await store.dispatch(fetchEmployeeById('123') as any)
+        expect(result.type).toBe('employees/employee/rejected');
+        expect(result.payload).toBe('Failed to fetch employeeById');
+    });
+    it('removeEmployee - should dispatch rejected action when API calls fails', async () => {
+        const errorResponse = {
+            response: {
+                data: 'Failed to delete employee'
+            }
+        }
+        mockedRemoveEmployee.mockRejectedValueOnce(errorResponse);
+
+        const result = await store.dispatch(removeEmployee('1') as any)
+        expect(result.type).toBe('employees/delete/rejected');
+        expect(result.payload).toBe('Failed to delete employee');
+    });
+
+
+
+
 
 });
